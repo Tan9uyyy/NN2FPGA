@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+:memory:.ses
+data/
+checkpoints/
+models/

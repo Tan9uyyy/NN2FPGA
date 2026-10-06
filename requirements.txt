@@ -1,0 +1,6 @@
+torch
+torchvision
+brevitas
+onnx==1.22.0
+onnxoptimizer
+qonnx
