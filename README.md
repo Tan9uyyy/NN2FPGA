@@ -23,7 +23,8 @@ python src/export_onnx.py
 Sans `--bits`, l'entraînement et l'évaluation utilisent FP32. L'entraînement dure
 5 époques. L'évaluation affiche la réussite et la taille des poids.
 
-L'export utilise `BITS = 8` dans `src/export_onnx.py` et génère les deux fichiers :
+L'export lit les bits du fichier choisi avec `CHECKPOINT` dans `src/export_onnx.py`
+et génère les deux fichiers :
 
 ```text
 models/mnist_int8.onnx

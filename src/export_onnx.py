@@ -8,17 +8,15 @@ from qonnx.util.cleanup import cleanup_model
 
 from quant_model import QuantCNN
 
-BITS = 8
 ROOT = Path(__file__).resolve().parent.parent
-CHECKPOINT = ROOT / "checkpoints" / f"mnist_int{BITS}.pth"
-OUTPUT = ROOT / "models" / f"mnist_int{BITS}.onnx"
-QONNX_OUTPUT = ROOT / "models" / f"mnist_int{BITS}_qonnx.onnx"
-
-model = QuantCNN(bit_width=BITS)
+CHECKPOINT = ROOT / "checkpoints" / "mnist_int8.pth"
 saved = torch.load(CHECKPOINT, map_location="cpu", weights_only=True)
-if "state_dict" in saved and saved["bits"] != BITS:
-    raise ValueError("Les bits ne correspondent pas au checkpoint.")
-model.load_state_dict(saved.get("state_dict", saved))
+bits = saved["bits"]
+OUTPUT = ROOT / "models" / f"mnist_int{bits}.onnx"
+QONNX_OUTPUT = ROOT / "models" / f"mnist_int{bits}_qonnx.onnx"
+
+model = QuantCNN(bit_width=bits)
+model.load_state_dict(saved["state_dict"])
 model.eval()
 
 dummy_input = torch.randn(1, 1, 28, 28)
