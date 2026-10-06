@@ -17,14 +17,13 @@ Depuis la racine, avec l'environnement activé :
 ```bash
 python src/train.py --bits 8
 python src/evaluate.py --bits 8
-python src/export_onnx.py
+python src/export_onnx.py --bits 8
 ```
 
 Sans `--bits`, l'entraînement et l'évaluation utilisent FP32. L'entraînement dure
 5 époques. L'évaluation affiche la réussite et la taille des poids.
 
-L'export lit les bits du fichier choisi avec `CHECKPOINT` dans `src/export_onnx.py`
-et génère les deux fichiers :
+L'export utilise l'option `--bits` (par défaut 8) et génère les deux fichiers :
 
 ```text
 models/mnist_int8.onnx
