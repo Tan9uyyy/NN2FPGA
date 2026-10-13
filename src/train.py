@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 from model import SimpleCNN
-from paths import CHECKPOINTS_DIR, DATA_DIR
+from parameters import CHECKPOINTS_DIR, DATA_DIR, NB_BATCH, NB_EPOCH
 from quant_model import QuantCNN
 
 # Sans --bits : FP32. Avec --bits 8 : modèle quantifié sur 8 bits.
@@ -23,10 +23,10 @@ print(f"Modèle : {precision.upper()} | Device : {device}")
 dataset = datasets.MNIST(
     root=str(DATA_DIR), train=True, download=True, transform=transforms.ToTensor(),
 )
-loader = DataLoader(dataset, batch_size=64, shuffle=True)
+loader = DataLoader(dataset, batch_size=NB_BATCH, shuffle=True)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-Nepochs = 20
+Nepochs = NB_EPOCH
 
 model.train()
 for epoch in range(Nepochs):

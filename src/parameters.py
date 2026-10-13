@@ -12,3 +12,7 @@ ROOT = find_root()
 DATA_DIR = ROOT / "data"
 CHECKPOINTS_DIR = ROOT / "checkpoints"
 MODELS_DIR = ROOT / "models"
+
+NB_EPOCH = 20
+NB_BATCH = 64
+
