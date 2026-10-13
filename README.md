@@ -20,6 +20,7 @@ python src/evaluate.py --bits 8
 python src/export_onnx.py --bits 8
 ```
 
+`--bits` accepte de 2 à 8 : l'export ONNX standard (QCDQ) ne gère pas plus de 8 bits.
 Sans `--bits`, l'entraînement et l'évaluation utilisent FP32. L'entraînement dure
 5 époques. L'évaluation affiche la réussite et la taille des poids.
 

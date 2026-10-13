@@ -1,5 +1,4 @@
 import argparse
-from pathlib import Path
 
 import torch
 from brevitas.export import export_onnx_qcdq
@@ -7,20 +6,20 @@ from qonnx.core.modelwrapper import ModelWrapper
 from qonnx.transformation.qcdq_to_qonnx import QCDQToQuant
 from qonnx.util.cleanup import cleanup_model
 
+from paths import CHECKPOINTS_DIR, MODELS_DIR
 from quant_model import QuantCNN
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--bits", type=int, choices=range(2, 33), default=8, help="Nombre de bits (par défaut : 8).")
+parser.add_argument("--bits", type=int, choices=range(2, 9), default=8, help="Nombre de bits (par défaut : 8).")
 args = parser.parse_args()
 bits = args.bits
 
-ROOT = Path(__file__).resolve().parent.parent
-checkpoint = ROOT / "checkpoints" / f"mnist_int{bits}.pth"
+checkpoint = CHECKPOINTS_DIR / f"mnist_int{bits}.pth"
 if not checkpoint.is_file():
     parser.error(f"Poids absents : entraîne d'abord le modèle INT{bits}.")
 
-output = ROOT / "models" / f"mnist_int{bits}.onnx"
-qonnx_output = ROOT / "models" / f"mnist_int{bits}_qonnx.onnx"
+output = MODELS_DIR / f"mnist_int{bits}.onnx"
+qonnx_output = MODELS_DIR / f"mnist_int{bits}_qonnx.onnx"
 
 model = QuantCNN(bit_width=bits)
 saved = torch.load(checkpoint, map_location="cpu", weights_only=True)

@@ -1,20 +1,19 @@
 import argparse
-from pathlib import Path
 
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 from model import SimpleCNN
+from paths import CHECKPOINTS_DIR, DATA_DIR
 from quant_model import QuantCNN
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--bits", type=int, choices=range(2, 33), help="Sans option : FP32.")
+parser.add_argument("--bits", type=int, choices=range(2, 9), help="Sans option : FP32.")
 args = parser.parse_args()
 
-ROOT = Path(__file__).resolve().parent.parent
 precision = "fp32" if args.bits is None else f"int{args.bits}"
-checkpoint = ROOT / "checkpoints" / f"mnist_{precision}.pth"
+checkpoint = CHECKPOINTS_DIR / f"mnist_{precision}.pth"
 if not checkpoint.is_file():
     parser.error(f"Poids absents : entraîne d'abord le modèle {precision.upper()}.")
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -27,7 +26,7 @@ model.load_state_dict(saved.get("state_dict", saved))
 model.eval()
 
 dataset = datasets.MNIST(
-    root=str(ROOT / "data"), train=False, download=True, transform=transforms.ToTensor(),
+    root=str(DATA_DIR), train=False, download=True, transform=transforms.ToTensor(),
 )
 loader = DataLoader(dataset, batch_size=64)
 correct = 0
