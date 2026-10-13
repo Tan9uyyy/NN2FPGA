@@ -28,7 +28,7 @@ loader = DataLoader(dataset, batch_size=NB_BATCH, shuffle=True)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-Nepochs = NB_EPOCH
+Nepochs = min(NB_EPOCH,40)
 losses = []
 
 model.train()

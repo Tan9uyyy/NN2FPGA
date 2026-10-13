@@ -13,6 +13,6 @@ DATA_DIR = ROOT / "data"
 CHECKPOINTS_DIR = ROOT / "checkpoints"
 MODELS_DIR = ROOT / "models"
 
-NB_EPOCH = 20
+NB_EPOCH = 40 # Testé empiriquement comme amplement suffisant pour 2 à 8 bit de quantification
 NB_BATCH = 64
 
