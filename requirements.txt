@@ -1,5 +1,6 @@
 torch
 torchvision
+matplotlib
 brevitas
 onnx==1.22.0
 onnxoptimizer
