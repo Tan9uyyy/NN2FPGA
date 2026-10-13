@@ -1,5 +1,6 @@
 import argparse
 
+import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
@@ -26,7 +27,8 @@ dataset = datasets.MNIST(
 loader = DataLoader(dataset, batch_size=64, shuffle=True)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-Nepochs = 20
+Nepochs = 10
+losses = []
 
 model.train()
 for epoch in range(Nepochs):
@@ -38,8 +40,20 @@ for epoch in range(Nepochs):
         loss.backward()
         optimizer.step()
         total_loss += loss.item() * labels.size(0)
-    print(f"Epoch {epoch + 1}/{Nepochs} - Loss : {total_loss / len(dataset):.4f}")
+    epoch_loss = total_loss / len(dataset)
+    losses.append(epoch_loss)
+    print(f"Epoch {epoch + 1}/{Nepochs} - Loss : {epoch_loss:.4f}")
 
 checkpoint.parent.mkdir(parents=True, exist_ok=True)
 torch.save({"state_dict": model.state_dict(), "bits": args.bits, "epochs": Nepochs}, checkpoint)
 print(f"Poids sauvegardés : {checkpoint}")
+
+plt.plot(range(1, Nepochs + 1), losses, marker="o")
+plt.xlabel("Époque")
+plt.ylabel("Loss moyenne")
+plt.title(f"Entraînement MNIST — {precision.upper()}")
+plt.grid(True)
+graph = checkpoint.parent / f"mnist_{precision}_loss.png"
+plt.savefig(graph)
+print(f"Courbe sauvegardée : {graph}")
+plt.show()
