@@ -6,7 +6,7 @@ from qonnx.core.modelwrapper import ModelWrapper
 from qonnx.transformation.qcdq_to_qonnx import QCDQToQuant
 from qonnx.util.cleanup import cleanup_model
 
-from paths import CHECKPOINTS_DIR, MODELS_DIR
+from parameters import CHECKPOINTS_DIR, MODELS_DIR
 from quant_model import QuantCNN
 
 parser = argparse.ArgumentParser()

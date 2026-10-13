@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
 from model import SimpleCNN
-from paths import CHECKPOINTS_DIR, DATA_DIR
+from parameters import CHECKPOINTS_DIR, DATA_DIR, NB_BATCH
 from quant_model import QuantCNN
 
 parser = argparse.ArgumentParser()
@@ -28,15 +28,13 @@ model.eval()
 dataset = datasets.MNIST(
     root=str(DATA_DIR), train=False, download=True, transform=transforms.ToTensor(),
 )
-loader = DataLoader(dataset, batch_size=64)
+loader = DataLoader(dataset, batch_size=NB_BATCH)
 correct = 0
 with torch.no_grad():
     for images, labels in loader:
         predictions = model(images.to(device)).argmax(dim=1).cpu()
         correct += (predictions == labels).sum().item()
 
-# Estimation : poids compactés au nombre de bits choisi, biais en FP32.
-# Elle exclut les activations et les échelles de quantification.
 weights = sum(p.numel() for name, p in model.named_parameters()
               if name.endswith("weight"))
 biases = sum(p.numel() for name, p in model.named_parameters()
@@ -44,5 +42,5 @@ biases = sum(p.numel() for name, p in model.named_parameters()
 size = weights * (args.bits or 32) / 8 + biases * 4
 print(f"Modèle : {precision.upper()}")
 print(f"Réussite : {100 * correct / len(dataset):.2f} % ({correct}/{len(dataset)})")
-print(f"Poids + biais théoriques : {size / 1024:.2f} Kio")
+print(f"Poids + biais théoriques sur FPGA: {size / 1024:.2f} Kio")
 print(f"Fichier .pth réel : {checkpoint.stat().st_size / 1024:.2f} Kio")
