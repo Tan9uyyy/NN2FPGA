@@ -1,0 +1,3 @@
+[submodule "nn2fpga"]
+	path = NN2FPGA
+	url = https://github.com/robertoBosio/NN2FPGA

@@ -1,0 +1,26 @@
+# Validation locale du CNN avec nn2fpga (sans Vitis/Vivado)
+
+[project]
+top_name     = "mnist_int8"
+onnx_path    = "/workspace/models/mnist_int8_qonnx.onnx"
+project_root = "/tmp/nn2fpga_check/mnist_int8"
+hls_version  = 2024.2
+
+[platform]
+board     = "ZCU102"
+frequency = 250
+
+[steps]
+OptimizeBitwidth     = true
+AddStreamingParams   = true
+ComputeFifoDepth     = false   # nécessite vitis_hls
+OptimizeFifo         = false
+GenerateLightningSim = false
+Simulate             = false   # nécessite vitis_hls
+GenerateBitstream    = false   # Vitis HLS + Vivado
+Deploy               = false
+
+[options]
+silvia_packing     = false
+simulation         = "csim"
+store_intermediate = false

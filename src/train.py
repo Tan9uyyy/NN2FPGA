@@ -5,7 +5,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
-from model import SimpleCNN
+from MNIST_model import MNIST
 from parameters import CHECKPOINTS_DIR, DATA_DIR, NB_BATCH, NB_EPOCH
 from quant_model import QuantCNN
 
@@ -17,7 +17,7 @@ args = parser.parse_args()
 precision = "fp32" if args.bits is None else f"int{args.bits}"
 checkpoint = CHECKPOINTS_DIR / f"mnist_{precision}.pth"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model = SimpleCNN() if args.bits is None else QuantCNN(args.bits)
+model = MNIST() if args.bits is None else QuantCNN(args.bits)
 model = model.to(device)
 print(f"Modèle : {precision.upper()} | Device : {device}")
 
