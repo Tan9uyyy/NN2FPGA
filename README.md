@@ -18,6 +18,7 @@ Depuis la racine, avec l'environnement activé :
 python src/train.py --bits 8
 python src/evaluate.py --bits 8
 python src/export_onnx.py --bits 8
+python src/onnx_inference_cnn.py --bits 8 --samples 100
 ```
 
 `--bits` accepte de 2 à 8 : l'export ONNX standard (QCDQ) ne gère pas plus de 8 bits.
@@ -32,6 +33,14 @@ models/mnist_int8.onnx
 models/mnist_int8_qonnx.onnx
 ```
 
+`onnx_inference_cnn.py` charge le premier fichier avec ONNX Runtime sur CPU.
+Le script exécute le modèle sur des images de test, compare les prédictions aux
+étiquettes et affiche le temps total, le temps moyen par image et le débit.
+Comme dans l'exemple CIFAR-10, les optimisations du graphe ONNX Runtime sont
+désactivées. Sans `--samples`, le script parcourt les 10 000 images de test
+MNIST. Sans `--bits`, il utilise le modèle INT8.
+[Exemple CIFAR-10 de nn2FPGA](https://github.com/robertoBosio/nn2FPGA/blob/main/config_examples/cifar10/onnx_inference_cifar10.py)
+
 ## Fichiers
 
 - `src/model.py` : réseau FP32.
@@ -39,6 +48,7 @@ models/mnist_int8_qonnx.onnx
 - `src/train.py` : entraînement et sauvegarde dans `checkpoints/`.
 - `src/evaluate.py` : évaluation sur les images de test.
 - `src/export_onnx.py` : export ONNX et conversion QONNX.
+- `src/onnx_inference_cnn.py` évalue le modèle ONNX exporté sur MNIST.
 - `data/` : données MNIST téléchargées automatiquement.
 - `models/` : modèles exportés.
 
