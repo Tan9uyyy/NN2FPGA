@@ -15,12 +15,11 @@ import numpy as np
 import torch
 from ultralytics.data.augment import LetterBox
 from brevitas.graph.calibrate import calibration_mode
-from brevitas.graph.quantize import layerwise_quantize
 import brevitas.nn as qnn
-from brevitas.quant import Int8ActPerTensorFixedPoint, Int8WeightPerTensorFixedPoint, Int32Bias
 from ultralytics import YOLO
 
 from parameters import CHECKPOINTS_DIR, DATA_DIR, ROOT
+from yolov8m_brevitas import build_quant_yolo, ptq_checkpoint
 
 RESULTS_DIR = ROOT / "results"
 COCO128 = DATA_DIR / "coco128"
@@ -63,17 +62,8 @@ fp32 = YOLO(CHECKPOINTS_DIR / "yolov8m.pt")
 fp32_map = report(fp32, "fp32")
 
 # --- Quantifié ---
-yolo = YOLO(CHECKPOINTS_DIR / "yolov8m.pt")
-net = yolo.model.fuse(verbose=False).eval()  # Conv+BN -> Conv (sinon BN reste en float)
 bits = args.bits
-conv_map = {
-    torch.nn.Conv2d: (qnn.QuantConv2d, {
-        "input_quant": Int8ActPerTensorFixedPoint, "input_bit_width": bits,
-        "weight_quant": Int8WeightPerTensorFixedPoint, "weight_bit_width": bits,
-        "bias_quant": Int32Bias, "return_quant_tensor": False}),
-}
-# La conv DFL (poids fixes 0..15) fait partie du post-traitement : on la laisse en float.
-yolo.model = layerwise_quantize(net, compute_layer_map=conv_map, name_blacklist=["dfl"])
+yolo = build_quant_yolo(bits)
 n_q = sum(isinstance(m, qnn.QuantConv2d) for m in yolo.model.modules())
 print(f"\n{n_q} convolutions quantifiées en INT{bits}")
 
@@ -95,7 +85,7 @@ yolo.predictor = None  # au cas où : prochaine copie faite depuis le modèle ca
 print(f"Calibration sur {len(calib)} images")
 
 q_map = report(yolo, f"int{bits}")
-torch.save({"bits": bits, "state_dict": yolo.model.state_dict()}, CHECKPOINTS_DIR / f"yolov8m_int{bits}_ptq.pth")
+torch.save({"bits": bits, "state_dict": yolo.model.state_dict()}, ptq_checkpoint(bits))
 
 if fp32_map:
     print(f"\n{'':8s}{'mAP50':>8s}{'mAP50-95':>10s}")

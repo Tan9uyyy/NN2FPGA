@@ -1,0 +1,27 @@
+# Validation locale de YOLOv8m INT8 avec nn2fpga (sans Vitis/Vivado)
+
+[project]
+top_name     = "yolov8m"
+onnx_path    = "/workspace/models/yolov8m_int8_qonnx.onnx"
+project_root = "/tmp/nn2fpga_check/yolov8m"
+hls_version  = 2024.2
+
+[platform]
+board     = "ZCU102"
+frequency = 200
+
+[steps]
+OptimizeBitwidth     = true
+AddStreamingParams   = true
+ComputeFifoDepth     = false   # nécessite vitis_hls
+OptimizeFifo         = false
+GenerateLightningSim = false
+Simulate             = false   # nécessite vitis_hls
+GenerateBitstream    = false   # Vitis HLS + Vivado
+Deploy               = false
+
+[options]
+silvia_packing     = false
+simulation         = "csim"
+store_intermediate = false
+dsp_limit          = 700       # comme l'exemple yolov8n de nn2fpga
